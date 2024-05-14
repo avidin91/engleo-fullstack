@@ -41,6 +41,9 @@ let UserService = class UserService {
             throw new common_1.InternalServerErrorException('Failed to create user due to internal server error');
         }
     }
+    async findOne(email) {
+        return await this.userRepository.findOne({ where: { email } });
+    }
 };
 exports.UserService = UserService;
 exports.UserService = UserService = __decorate([

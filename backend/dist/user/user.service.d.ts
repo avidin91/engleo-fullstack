@@ -10,4 +10,5 @@ export declare class UserService {
             passwordHash: string;
         } & User;
     }>;
+    findOne(email: string): Promise<User>;
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import { Card, Flex, Typography, Image } from 'antd';
 import statistic from '@shared/img/Статистика.png';
-import SingIn from '@features/sing-in';
+import SignIn from '@features/sign-in';
 import CompilationsMiniWidget from '@widgets/compilations-mini-widget';
 import { rulesCompilations, wordsCompilations } from '@shared/constants/urls';
 import { newWordCompilationGroups } from '../../mocks/newWordCompilationGroups';
@@ -57,7 +57,7 @@ const Info = () => {
 							<Text style={{ fontSize: 20 }}>
 								Регистрируйтесь, и вам станут доступны все наши слова и подборки.
 							</Text>
-							<SingIn text="Зарегистрироваться" button="large" />
+							<SignIn text="Зарегистрироваться" button="large" />
 						</Flex>
 					</Flex>
 				</Card>

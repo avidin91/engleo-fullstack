@@ -1,7 +1,7 @@
 import React from 'react';
 import { Avatar, Button, ConfigProvider, Flex, Layout, Typography } from 'antd';
 import logo from '@shared/img/logo.svg';
-import SingIn from '@features/sing-in';
+import SignIn from '@features/sign-in';
 import { Link } from 'react-router-dom';
 import './styles.css';
 import { rulesCompilations, wordsCompilations } from '@shared/constants/urls';
@@ -50,7 +50,7 @@ const HeaderComponent = () => {
 					<Link to={'/about'}>
 						<Button type="text">О нас</Button>
 					</Link>
-					<SingIn text="Войти" button="small" />
+					<SignIn text="Войти" button="small" />
 				</Flex>
 			</Header>
 		</ConfigProvider>

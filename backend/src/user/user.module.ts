@@ -9,5 +9,6 @@ import { UserWordProgress } from './entities/user-word-progress.entity';
   imports: [TypeOrmModule.forFeature([User, UserWordProgress])],
   controllers: [UserController],
   providers: [UserService],
+  exports: [UserService],
 })
 export class UserModule {}
