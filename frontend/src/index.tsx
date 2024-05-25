@@ -10,12 +10,15 @@ import { about, contactUs, rulesCompilations, wordsCompilations } from '@shared/
 import Words from '@pages/words';
 import Rule from '@pages/rule';
 import CompilationsPage from '@pages/compilations-page';
+import { Provider } from 'react-redux';
+import { store } from '@shared/store';
+import { ErrorBoundary } from '@shared/routing';
 
 const router = createBrowserRouter([
 	{
 		path: '/',
 		element: <App />,
-		errorElement: <NotFound />,
+		errorElement: <ErrorBoundary />,
 		children: [
 			{
 				path: '/',
@@ -41,7 +44,15 @@ const router = createBrowserRouter([
 				path: contactUs,
 				element: <ContactUs />,
 			},
+			{
+				path: '*',
+				element: <NotFound />,
+			},
 		],
+	},
+	{
+		path: '*',
+		element: <NotFound />,
 	},
 ]);
 
@@ -49,6 +60,8 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 
 root.render(
 	<React.StrictMode>
-		<RouterProvider router={router} />
+		<Provider store={store}>
+			<RouterProvider router={router} />
+		</Provider>
 	</React.StrictMode>,
 );

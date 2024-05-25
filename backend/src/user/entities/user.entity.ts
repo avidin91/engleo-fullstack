@@ -1,25 +1,28 @@
 import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
+    Column,
+    CreateDateColumn,
+    Entity,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-  @Column({ type: 'text', unique: true, nullable: false })
-  email: string;
+    @Column({ type: 'text', unique: true, nullable: false })
+    email: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: false })
-  passwordHash: string;
+    @Column({ type: 'varchar', length: 255, nullable: false })
+    passwordHash: string;
 
-  @CreateDateColumn()
-  createdAt: Date;
+    @Column({ default: 'USER' })
+    role: 'ADMIN' | 'USER';
 
-  @UpdateDateColumn()
-  updatedAt: Date;
+    @CreateDateColumn()
+    createdAt: Date;
+
+    @UpdateDateColumn()
+    updatedAt: Date;
 }

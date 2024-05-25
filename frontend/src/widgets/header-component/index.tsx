@@ -1,15 +1,48 @@
 import React from 'react';
-import { Avatar, Button, ConfigProvider, Flex, Layout, Typography } from 'antd';
+import { Avatar, Button, ConfigProvider, Dropdown, Flex, Layout, Typography } from 'antd';
 import logo from '@shared/img/logo.svg';
-import SignIn from '@features/sign-in';
 import { Link } from 'react-router-dom';
 import './styles.css';
 import { rulesCompilations, wordsCompilations } from '@shared/constants/urls';
+import SignInModal from '@features/sign-in-modal';
+import { useIsAuth } from '@shared/hooks/useIsAuth';
+import { UserOutlined } from '@ant-design/icons';
+import { useAppDispatch } from '@shared/store/hooks';
+import { logout } from '@shared/store/user/userSlice';
+import { removeTokenFromLocalStorage } from '@shared/utils/localstorage.helper';
 
 const { Text } = Typography;
 const { Header } = Layout;
 
 const HeaderComponent = () => {
+	const isAuth = useIsAuth();
+	const dispatch = useAppDispatch();
+
+	const handleLogout = () => {
+		dispatch(logout());
+		removeTokenFromLocalStorage();
+	};
+
+	const menuItems = [
+		{
+			key: '0',
+			label: 'Профиль',
+		},
+		{
+			key: '1',
+			label: 'Настройки',
+		},
+		{
+			key: '2',
+			type: 'divider',
+		},
+		{
+			key: '3',
+			label: 'Выход',
+			onClick: handleLogout,
+		},
+	];
+
 	return (
 		<ConfigProvider
 			theme={{
@@ -50,7 +83,16 @@ const HeaderComponent = () => {
 					<Link to={'/about'}>
 						<Button type="text">О нас</Button>
 					</Link>
-					<SignIn text="Войти" button="small" />
+					{isAuth ? (
+						<Dropdown menu={{ items: menuItems }} trigger={['click']}>
+							<Button>
+								Меню
+								<UserOutlined />
+							</Button>
+						</Dropdown>
+					) : (
+						<SignInModal text="Войти" button="small" formPrefix="header" />
+					)}
 				</Flex>
 			</Header>
 		</ConfigProvider>

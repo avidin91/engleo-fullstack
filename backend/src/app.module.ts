@@ -6,6 +6,8 @@ import { WordsModule } from './words/words.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { GroupsModule } from './groups/groups.module';
+import { CompilationsModule } from './compilations/compilations.module';
 
 @Module({
   imports: [
@@ -27,6 +29,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     UserModule,
     WordsModule,
     AuthModule,
+    GroupsModule,
+    CompilationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

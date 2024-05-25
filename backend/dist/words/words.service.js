@@ -9,21 +9,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.WordsService = void 0;
 const common_1 = require("@nestjs/common");
 let WordsService = class WordsService {
-    create(createWordDto) {
-        return 'This action adds a new word';
-    }
-    findAll() {
-        return `This action returns all words`;
-    }
-    findOne(id) {
-        return `This action returns a #${id} word`;
-    }
-    update(id, updateWordDto) {
-        return `This action updates a #${id} word`;
-    }
-    remove(id) {
-        return `This action removes a #${id} word`;
-    }
 };
 exports.WordsService = WordsService;
 exports.WordsService = WordsService = __decorate([

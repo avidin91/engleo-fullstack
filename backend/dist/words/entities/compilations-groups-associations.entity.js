@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CompilationsGroupsAssociation = void 0;
 const typeorm_1 = require("typeorm");
-const groups_entity_1 = require("./groups.entity");
+const groups_entity_1 = require("../../groups/entities/groups.entity");
 const compilations_entity_1 = require("./compilations.entity");
 let CompilationsGroupsAssociation = class CompilationsGroupsAssociation {
 };

@@ -26,15 +26,16 @@ let UserService = class UserService {
         const userExist = await this.userRepository.findOne({
             where: { email: createUserDto.email },
         });
-        if (userExist)
-            throw new common_1.BadRequestException('This email is already exist!');
+        if (userExist) {
+            throw new common_1.BadRequestException('Пользователь с таким email уже зарегистрирован!');
+        }
         try {
             const hashedPassword = await (0, bcrypt_1.encodePassword)(createUserDto.password);
-            const user = await this.userRepository.save({
+            await this.userRepository.save({
                 email: createUserDto.email,
                 passwordHash: hashedPassword,
             });
-            return { user };
+            return { message: 'ok' };
         }
         catch (error) {
             console.error('Error occurred during user creation:', error);

@@ -15,6 +15,8 @@ const words_module_1 = require("./words/words.module");
 const auth_module_1 = require("./auth/auth.module");
 const config_1 = require("@nestjs/config");
 const typeorm_1 = require("@nestjs/typeorm");
+const groups_module_1 = require("./groups/groups.module");
+const compilations_module_1 = require("./compilations/compilations.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -39,6 +41,8 @@ exports.AppModule = AppModule = __decorate([
             user_module_1.UserModule,
             words_module_1.WordsModule,
             auth_module_1.AuthModule,
+            groups_module_1.GroupsModule,
+            compilations_module_1.CompilationsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

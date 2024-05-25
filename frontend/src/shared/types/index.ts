@@ -1,9 +1,2 @@
-export type TWord = {
-	word: string;
-	translation: string;
-	example: string;
-	exampleTranslation: string;
-	image: string;
-	wordCompilationsIds: number[];
-	compilationName: string;
-};
+export * from './wodr-entities.types';
+export * from './user.types';

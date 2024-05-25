@@ -22,11 +22,11 @@ let AuthService = class AuthService {
     async validateUser(email, password) {
         const user = await this.userService.findOne(email);
         if (!user) {
-            throw new common_1.UnauthorizedException('User or password are incorrect!');
+            throw new common_1.UnauthorizedException('Неверные email или пароль!');
         }
         const isPasswordMatch = await (0, bcrypt_1.matchingPassword)(password, user.passwordHash);
         if (!isPasswordMatch) {
-            throw new common_1.UnauthorizedException('User or password are incorrect!');
+            throw new common_1.UnauthorizedException('Неверные email или пароль!');
         }
         return user;
     }

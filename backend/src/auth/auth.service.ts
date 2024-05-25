@@ -15,13 +15,13 @@ export class AuthService {
     const user = await this.userService.findOne(email);
 
     if (!user) {
-      throw new UnauthorizedException('User or password are incorrect!');
+      throw new UnauthorizedException('Неверные email или пароль!');
     }
 
     const isPasswordMatch = await matchingPassword(password, user.passwordHash);
 
     if (!isPasswordMatch) {
-      throw new UnauthorizedException('User or password are incorrect!');
+      throw new UnauthorizedException('Неверные email или пароль!');
     }
 
     return user;
