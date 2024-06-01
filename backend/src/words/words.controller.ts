@@ -15,6 +15,11 @@ import { UpdateWordDto } from './dto/word/update-word.dto';
 export class WordsController {
     constructor(private readonly wordsService: WordsService) {}
 
+    // @Post()
+    // createWord(@Body() createWordDto: CreateWordDto) {
+    //     return this.wordsService.createWordDTO(createWordDto)
+    // }
+
     // @Post('compilation')
     // createCompilation(@Body() createCompilationDto: CreateCompilationDto) {
     //     return this.wordsService.createCompilation(createCompilationDto);

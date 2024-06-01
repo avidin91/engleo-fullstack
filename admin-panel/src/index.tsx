@@ -11,6 +11,8 @@ import RulesGroups from '@pages/rules-groups';
 import Rules from '@pages/rules';
 import SignIn from '@pages/sign-in';
 import { ErrorBoundary } from '@shared/routing';
+import { Provider } from 'react-redux';
+import { store } from '@shared/store';
 
 const router = createBrowserRouter([
 	{
@@ -63,6 +65,8 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 
 root.render(
 	<React.StrictMode>
-		<RouterProvider router={router} />
+		<Provider store={store}>
+			<RouterProvider router={router} />
+		</Provider>
 	</React.StrictMode>,
 );

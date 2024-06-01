@@ -31,11 +31,16 @@ let AuthService = class AuthService {
         return user;
     }
     async login(user) {
-        const { id, email } = user;
+        const { id, email, role } = user;
         return {
             id,
             email,
-            token: this.jwtService.sign({ id: user.id, email: user.email }),
+            role,
+            token: this.jwtService.sign({
+                id: user.id,
+                email: user.email,
+                role,
+            }),
         };
     }
 };

@@ -9,6 +9,7 @@ export declare class AuthService {
     login(user: TUser): Promise<{
         id: string;
         email: string;
+        role: "ADMIN" | "USER";
         token: string;
     }>;
 }

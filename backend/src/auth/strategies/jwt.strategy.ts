@@ -6,15 +6,15 @@ import { TUser } from '../../types/types';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly configService: ConfigService) {
-    super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ignoreExpiration: false,
-      secretOrKey: configService.get('JWT_SECRET'),
-    });
-  }
+    constructor(private readonly configService: ConfigService) {
+        super({
+            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+            ignoreExpiration: false,
+            secretOrKey: configService.get('JWT_SECRET'),
+        });
+    }
 
-  async validate(user: TUser) {
-    return { id: user.id, email: user.email };
-  }
+    async validate(user: TUser) {
+        return { id: user.id, email: user.email, role: user.role };
+    }
 }

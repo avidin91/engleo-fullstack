@@ -6,9 +6,9 @@ import { User } from './entities/user.entity';
 import { UserWordProgress } from './entities/user-word-progress.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, UserWordProgress])],
-  controllers: [UserController],
-  providers: [UserService],
-  exports: [UserService],
+    imports: [TypeOrmModule.forFeature([User, UserWordProgress])],
+    controllers: [UserController],
+    providers: [UserService],
+    exports: [UserService],
 })
 export class UserModule {}

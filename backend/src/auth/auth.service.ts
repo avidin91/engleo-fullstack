@@ -6,34 +6,42 @@ import { TUser } from '../types/types';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private readonly userService: UserService,
-    private readonly jwtService: JwtService,
-  ) {}
+    constructor(
+        private readonly userService: UserService,
+        private readonly jwtService: JwtService,
+    ) {}
 
-  async validateUser(email: string, password: string) {
-    const user = await this.userService.findOne(email);
+    async validateUser(email: string, password: string) {
+        const user = await this.userService.findOne(email);
 
-    if (!user) {
-      throw new UnauthorizedException('Неверные email или пароль!');
+        if (!user) {
+            throw new UnauthorizedException('Неверные email или пароль!');
+        }
+
+        const isPasswordMatch = await matchingPassword(
+            password,
+            user.passwordHash,
+        );
+
+        if (!isPasswordMatch) {
+            throw new UnauthorizedException('Неверные email или пароль!');
+        }
+
+        return user;
     }
 
-    const isPasswordMatch = await matchingPassword(password, user.passwordHash);
+    async login(user: TUser) {
+        const { id, email, role } = user;
 
-    if (!isPasswordMatch) {
-      throw new UnauthorizedException('Неверные email или пароль!');
+        return {
+            id,
+            email,
+            role,
+            token: this.jwtService.sign({
+                id: user.id,
+                email: user.email,
+                role,
+            }),
+        };
     }
-
-    return user;
-  }
-
-  async login(user: TUser) {
-    const { id, email } = user;
-
-    return {
-      id,
-      email,
-      token: this.jwtService.sign({ id: user.id, email: user.email }),
-    };
-  }
 }

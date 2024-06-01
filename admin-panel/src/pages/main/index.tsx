@@ -4,6 +4,7 @@ import { Header } from 'antd/es/layout/layout';
 import { minHeight } from '@shared/constants/constants';
 import SiderMenu from '@widgets/sider-menu';
 import { Outlet } from 'react-router-dom';
+import HeaderComponent from '@widgets/header-component';
 
 const { Content } = Layout;
 
@@ -15,7 +16,8 @@ const Main = () => {
 	return (
 		<>
 			<Layout>
-				<Header style={{ display: 'flex', alignItems: 'center' }}>Header</Header>
+				{/*<Header style={{ display: 'flex', alignItems: 'center' }}>Header</Header>*/}
+				<HeaderComponent />
 				<Layout style={{ minHeight }}>
 					<SiderMenu />
 					<Layout style={{ padding: '0 24px 24px' }}>

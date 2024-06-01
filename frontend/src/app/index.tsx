@@ -12,16 +12,16 @@ const App = () => {
 	const dispatch = useAppDispatch();
 	const checkAuth = async () => {
 		const token = getTokenFromLocalStorage();
-		console.log('token = ', token);
 		try {
 			if (token) {
 				const data = await AuthService.getProfile();
-				console.log('data = ', data);
 				if (data) {
 					dispatch(login(data));
 				} else {
 					dispatch(logout());
 				}
+			} else {
+				dispatch(logout());
 			}
 		} catch (e) {
 			console.log(e);
