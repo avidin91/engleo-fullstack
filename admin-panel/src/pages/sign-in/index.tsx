@@ -3,7 +3,7 @@ import { Button, Flex, Form, FormProps, Input, message } from 'antd';
 import { useAppDispatch } from '@shared/store/hooks';
 import { AuthService } from '@shared/services/auth.service';
 import { setTokenToLocalStorage } from '@shared/utils/localstorage.helper';
-import { login } from '@shared/store/slices/auth.slice';
+import { login, logout } from '@shared/store/slices/auth.slice';
 import { useNavigate } from 'react-router-dom';
 
 type FieldType = {
@@ -18,9 +18,15 @@ const SignIn = () => {
 	const onFinish: FormProps<FieldType>['onFinish'] = async ({ email, password }) => {
 		try {
 			const data = await AuthService.login({ email, password });
+			if (data.role !== 'ADMIN') {
+				dispatch(logout());
+			}
+
 			setTokenToLocalStorage(data.token);
 			dispatch(login(data));
 			navigate('/');
+			// FIXME подумать как убрать
+			window.location.reload();
 		} catch (e) {
 			message.error('Ошибка авторизации');
 		}

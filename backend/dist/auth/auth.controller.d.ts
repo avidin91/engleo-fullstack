@@ -5,6 +5,7 @@ export declare class AuthController {
     login(req: any): Promise<{
         id: string;
         email: string;
+        role: "ADMIN" | "USER";
         token: string;
     }>;
     getProfile(req: any): any;

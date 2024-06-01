@@ -8,6 +8,7 @@ export declare class JwtStrategy extends JwtStrategy_base {
     validate(user: TUser): Promise<{
         id: string;
         email: string;
+        role: "USER" | "ADMIN";
     }>;
 }
 export {};

@@ -3,6 +3,7 @@ import { instance } from '@shared/api/axios-api';
 export interface IUser {
 	id: number;
 	email: string;
+	role: 'ADMIN';
 	token: string;
 }
 
