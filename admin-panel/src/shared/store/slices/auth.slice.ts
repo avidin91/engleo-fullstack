@@ -5,6 +5,7 @@ export interface IUser {
 	id: number;
 	email: string;
 	token: string;
+	role: 'ADMIN';
 }
 
 interface IUserState {

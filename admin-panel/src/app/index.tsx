@@ -20,7 +20,6 @@ const App = () => {
 				const data = await AuthService.getProfile();
 
 				if (data && data.role === 'ADMIN') {
-					console.log('skndlsjjnd');
 					dispatch(login(data));
 				} else {
 					dispatch(logout());
