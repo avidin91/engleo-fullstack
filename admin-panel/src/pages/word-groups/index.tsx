@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 import { Button, Flex, Form, FormProps, Input, Modal, Table } from 'antd';
 import { useAppDispatch, useAppSelector } from '@shared/store/hooks';
-import { createGroup, deleteGroup, fetchGroups } from '@shared/store/slices/groups.slice';
+import { createGroup, deleteGroup, fetchGroups } from '@shared/store/slices/word-groups.slice';
 import { slugifyString } from '@shared/utils/slugifyString';
 import { DeleteOutlined } from '@ant-design/icons';
 import UpdateModal from '@pages/word-groups/updateModal';
 import { IFieldType, IRecordType } from '@pages/word-groups/types';
 
 const WordGroups = () => {
-	const groupsStore = useAppSelector((state) => state.groupsStore);
+	const wordGroupsStore = useAppSelector((state) => state.wordGroupsStore);
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
@@ -56,7 +56,7 @@ const WordGroups = () => {
 		},
 	];
 
-	const dataSource = groupsStore.groups.map((group) => ({
+	const dataSource = wordGroupsStore.groups.map((group) => ({
 		...group,
 		key: group.id,
 	}));

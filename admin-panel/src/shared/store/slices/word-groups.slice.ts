@@ -16,8 +16,12 @@ interface IGroupState {
 }
 
 export const fetchGroups = createAsyncThunk('groups/fetchGroups', async () => {
-	const response = await instance.get('groups');
-	return response.data;
+	try {
+		const response = await instance.get('groups');
+		return response.data;
+	} catch (e: any) {
+		message.error(e.response.data.message);
+	}
 });
 
 export const createGroup = createAsyncThunk(
@@ -70,7 +74,7 @@ const initialState: IGroupState | null = {
 	isGroupDeleting: false,
 };
 
-const groupsSlice = createSlice({
+const wordGroupsSlice = createSlice({
 	name: 'groups',
 	initialState,
 	reducers: {},
@@ -85,7 +89,6 @@ const groupsSlice = createSlice({
 			})
 			.addCase(fetchGroups.rejected, (state, action) => {
 				state.isLoading = false;
-				message.error(action.error.message || 'Failed to fetch groups');
 			})
 			.addCase(createGroup.pending, (state) => {
 				state.isGroupCreating = true;
@@ -108,4 +111,4 @@ const groupsSlice = createSlice({
 	},
 });
 
-export default groupsSlice.reducer;
+export default wordGroupsSlice.reducer;

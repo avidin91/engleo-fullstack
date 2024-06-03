@@ -17,6 +17,7 @@ const config_1 = require("@nestjs/config");
 const typeorm_1 = require("@nestjs/typeorm");
 const groups_module_1 = require("./groups/groups.module");
 const compilations_module_1 = require("./compilations/compilations.module");
+const files_module_1 = require("./modules/files/files.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -43,6 +44,7 @@ exports.AppModule = AppModule = __decorate([
             auth_module_1.AuthModule,
             groups_module_1.GroupsModule,
             compilations_module_1.CompilationsModule,
+            files_module_1.FilesModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

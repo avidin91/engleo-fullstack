@@ -8,6 +8,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GroupsModule } from './groups/groups.module';
 import { CompilationsModule } from './compilations/compilations.module';
+import { FilesModule } from './modules/files/files.module';
 
 @Module({
     imports: [
@@ -31,6 +32,7 @@ import { CompilationsModule } from './compilations/compilations.module';
         AuthModule,
         GroupsModule,
         CompilationsModule,
+        FilesModule,
     ],
     controllers: [AppController],
     providers: [AppService],

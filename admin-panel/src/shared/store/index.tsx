@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authSlice from '@shared/store/slices/auth.slice';
-import groupsSlice from '@shared/store/slices/groups.slice';
+import wordGroupsSlice from '@shared/store/slices/word-groups.slice';
+import wordCompilationsSlice from '@shared/store/slices/word-compilations.slice';
 
 export const store = configureStore({
 	reducer: {
 		authStore: authSlice,
-		groupsStore: groupsSlice,
+		wordGroupsStore: wordGroupsSlice,
+		wordCompilationsStore: wordCompilationsSlice,
 	},
 });
 

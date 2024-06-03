@@ -5,7 +5,7 @@ import { useAppDispatch } from '@shared/store/hooks';
 import { EditOutlined } from '@ant-design/icons';
 import { IRecordType, IUpdateFieldType } from '@pages/word-groups/types';
 import { useForm } from 'antd/es/form/Form';
-import { updateGroup } from '@shared/store/slices/groups.slice';
+import { updateGroup } from '@shared/store/slices/word-groups.slice';
 
 interface IUpdateModal {
 	record: IRecordType;
