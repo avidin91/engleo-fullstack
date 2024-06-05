@@ -1,1 +1,0 @@
-{"version":3,"file":"words.controller.js","sourceRoot":"","sources":["../../src/words/words.controller.ts"],"names":[],"mappings":";;;;;;;;;;;;AAAA,2CAQwB;AACxB,mDAA+C;AAKxC,IAAM,eAAe,GAArB,MAAM,eAAe;IACxB,YAA6B,YAA0B;QAA1B,iBAAY,GAAZ,YAAY,CAAc;IAAG,CAAC;CAqB9D,CAAA;AAtBY,0CAAe;0BAAf,eAAe;IAD3B,IAAA,mBAAU,EAAC,OAAO,CAAC;qCAE2B,4BAAY;GAD9C,eAAe,CAsB3B"}

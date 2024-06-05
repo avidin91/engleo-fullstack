@@ -3,4 +3,5 @@ idea/
 frontend/node_modules/
 backend/node_modules/
 backend/uploads/
+backend/dist/
 admin-panel/node_modules/

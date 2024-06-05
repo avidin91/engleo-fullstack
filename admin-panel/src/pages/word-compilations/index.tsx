@@ -1,36 +1,42 @@
 import React, { useEffect } from 'react';
-import { Button, Flex, Form, FormProps, Input, Table, Upload } from 'antd';
+import { Button, Flex, Form, FormProps, Image, Input, Table, Upload } from 'antd';
 import { slugifyString } from '@shared/utils/slugifyString';
 import { useAppDispatch, useAppSelector } from '@shared/store/hooks';
-import { IRecordType } from '@pages/word-groups/types';
-import UpdateModal from '@pages/word-groups/updateModal';
+import { IRecordType } from './types';
+import UpdateModal from './updateModal';
 import { DeleteOutlined } from '@ant-design/icons';
-import { fetchWordCompilations } from '@shared/store/slices/word-compilations.slice';
+import {
+	createWordCompilation,
+	deleteCompilation,
+	fetchWordCompilations,
+} from '@shared/store/slices/word-compilations.slice';
 import ImgCrop from 'antd-img-crop';
 import { getTokenFromLocalStorage } from '@shared/utils/localstorage.helper';
-import { instance } from '@shared/api/axios-api';
+import { useForm } from 'antd/es/form/Form';
 
 interface IFieldType {
 	title: string;
 	titleInEnglish: string;
 	description: string;
-	image: File;
 }
 
 const WordCompilations = () => {
 	const wordCompilationsStore = useAppSelector((state) => state.wordCompilationsStore);
 	const dispatch = useAppDispatch();
+	const [form] = useForm();
 
 	useEffect(() => {
 		dispatch(fetchWordCompilations());
 	}, []);
 
 	const onFinish: FormProps<IFieldType>['onFinish'] = (values) => {
-		console.log('values = ', values);
-
-		// const title = values.title;
-		// const slug = slugifyString(title);
-		// dispatch(createGroup({ title, slug }));
+		form.getFieldValue('image');
+		const data = {
+			...values,
+			image: form.getFieldValue('image'),
+			slug: slugifyString(values.title),
+		};
+		dispatch(createWordCompilation(data));
 	};
 
 	const onFinishFailed: FormProps<IFieldType>['onFinishFailed'] = (errorInfo) => {
@@ -68,11 +74,24 @@ const WordCompilations = () => {
 			dataIndex: 'image',
 			key: 'image',
 		},
-		// {
-		// 	title: 'Редактировать',
-		// 	key: 'edit',
-		// 	render: (record: IRecordType) => <UpdateModal record={record} />,
-		// },
+		{
+			title: 'Миниатюра',
+			key: 'mini-image',
+			render: ({ image }: { image: string }) => {
+				return (
+					<Image
+						src={`http://localhost:3009/static/${image}`}
+						width={60}
+						style={{ border: '1px solid', borderRadius: 6 }}
+					/>
+				);
+			},
+		},
+		{
+			title: 'Редактировать',
+			key: 'edit',
+			render: (record: IRecordType) => <UpdateModal record={record} />,
+		},
 		{
 			title: 'Удалить',
 			key: 'delete',
@@ -80,7 +99,7 @@ const WordCompilations = () => {
 				<Button
 					type="link"
 					danger
-					// onClick={() => handleDelete(record.id)}
+					onClick={() => dispatch(deleteCompilation(record.id))}
 					style={{ border: '1px solid' }}
 				>
 					<DeleteOutlined style={{ color: 'red', fontSize: 20 }} />
@@ -89,37 +108,10 @@ const WordCompilations = () => {
 		},
 	];
 
-	const dataSource = wordCompilationsStore.compilations.map((group) => ({
-		...group,
-		key: group.id,
+	const dataSource = wordCompilationsStore.compilations.map((compilation) => ({
+		...compilation,
+		key: compilation.id,
 	}));
-
-	const normFile = (e: any) => {
-		console.log('тут');
-		console.log('Upload event:', e);
-		if (Array.isArray(e)) {
-			return e;
-		}
-		return e?.fileList;
-	};
-
-	const test = async (request: any) => {
-		try {
-			const formData = new FormData();
-			formData.append('file', request.file);
-
-			console.log('request = ', request);
-			console.log('formData = ', formData);
-
-			const response = await instance.post('files/upload/word-compilation', request.file);
-			// console.log('File upload response:', response);
-		} catch (error) {
-			console.error('Error uploading file:', error);
-		}
-		// console.log('req = ', request);
-		// const response = await instance.post('files/upload', request.file);
-		// console.log('res = ', response);
-	};
 
 	return (
 		<Flex vertical gap={32}>
@@ -162,23 +154,7 @@ const WordCompilations = () => {
 					<Input />
 				</Form.Item>
 
-				{/*<Form.Item<IFieldType>*/}
-				{/*	label="Картинка"*/}
-				{/*	name="image"*/}
-				{/*	rules={[*/}
-				{/*		{ required: true, message: 'Пожалуйста введите название подборки слов' },*/}
-				{/*	]}*/}
-				{/*>*/}
-				{/*	<Input />*/}
-				{/*</Form.Item>*/}
-
-				<Form.Item<IFieldType>
-					name="image"
-					label="Изображение"
-					required
-					valuePropName="file"
-					getValueFromEvent={normFile}
-				>
+				<Form.Item name="image" label="Изображение" required valuePropName="file">
 					<ImgCrop>
 						<Upload
 							maxCount={1}
@@ -188,10 +164,9 @@ const WordCompilations = () => {
 								Authorization: 'Bearer ' + getTokenFromLocalStorage(),
 							}}
 							listType="picture-card"
-							// beforeUpload={(rr) => console.log(rr)}
 							onChange={(info) => {
 								if (info.file.status === 'done') {
-									console.log('info = ', info.file.response);
+									form.setFieldValue('image', info.file.response[1].url);
 								}
 							}}
 						>

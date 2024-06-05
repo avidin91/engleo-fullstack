@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './user/user.module';
-import { WordsModule } from './words/words.module';
-import { AuthModule } from './auth/auth.module';
+import { UserModule } from './modules/user/user.module';
+import { WordsModule } from './modules/words/words.module';
+import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { GroupsModule } from './groups/groups.module';
-import { CompilationsModule } from './compilations/compilations.module';
+import { GroupsModule } from './modules/groups/groups.module';
+import { CompilationsModule } from './modules/compilations/compilations.module';
 import { FilesModule } from './modules/files/files.module';
 
 @Module({

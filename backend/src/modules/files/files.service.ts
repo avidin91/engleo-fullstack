@@ -5,6 +5,7 @@ import { ensureDir, writeFile } from 'fs-extra';
 import * as sharp from 'sharp';
 import { MFile } from './mfile.class';
 import slugify from 'slugify';
+import * as iconv from 'iconv-lite';
 
 @Injectable()
 export class FilesService {
@@ -35,6 +36,10 @@ export class FilesService {
     }
 
     formatName(file: MFile) {
+        file.originalname = iconv.decode(
+            Buffer.from(file.originalname, 'binary'),
+            'utf-8',
+        );
         const fileName = file.originalname.slice(
             0,
             file.originalname.lastIndexOf('.'),
