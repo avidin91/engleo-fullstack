@@ -1,21 +1,38 @@
-import React, { useEffect } from 'react';
-import { Button, Flex, Form, FormProps, Image, Input, Table, Upload } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Button, Flex, Form, FormProps, Image, Input, Select, Table, Upload } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '@shared/store/hooks';
-import { createWord, deleteWord, fetchWords } from '@shared/store/slices/words.slice';
+import {
+	createWord,
+	createWordCompilationAssociation,
+	deleteWord,
+	deleteWordCompilationAssociation,
+	fetchWords,
+	fetchWordsCompilationsAssociations,
+} from '@shared/store/slices/words.slice';
 import { IFieldType, IRecordType } from '@pages/words/types';
 import ImgCrop from 'antd-img-crop';
 import { getTokenFromLocalStorage } from '@shared/utils/localstorage.helper';
 import { useForm } from 'antd/es/form/Form';
 import UpdateModal from '@pages/words/updateModal';
+import { debounce } from 'lodash';
+import { fetchWordCompilations } from '@shared/store/slices/word-compilations.slice';
 
 const Words = () => {
 	const wordsStore = useAppSelector((state) => state.wordsStore);
+	const wordCompilationsStore = useAppSelector((state) => state.wordCompilationsStore);
 	const dispatch = useAppDispatch();
 	const [form] = useForm();
+	const [isDataLoaded, setIsDataLoaded] = useState(false); // FIXME убрать локальное состояние, если возвожно
 
 	useEffect(() => {
-		dispatch(fetchWords());
+		Promise.all([
+			dispatch(fetchWords()),
+			dispatch(fetchWordsCompilationsAssociations()),
+			dispatch(fetchWordCompilations()),
+		]).then(() => {
+			setIsDataLoaded(true);
+		});
 	}, []);
 
 	const onFinish: FormProps<IFieldType>['onFinish'] = (values) => {
@@ -76,6 +93,56 @@ const Words = () => {
 			},
 		},
 		{
+			title: 'Подборки слов',
+			key: 'edit',
+			render: (record: IRecordType) => {
+				if (!isDataLoaded) return null;
+
+				const handleSelect = (compilationTitle: string) => {
+					const selectedCompilation = options.find(
+						(option) => option.value === compilationTitle,
+					);
+					const compilationId = selectedCompilation!.id;
+
+					const debouncedDispatch = () => {
+						dispatch(
+							createWordCompilationAssociation({
+								wordId: record.id,
+								compilationId,
+							}),
+						);
+					};
+					debounce(debouncedDispatch, 300)();
+				};
+
+				const handleDeselect = (compilation: any) => {
+					const association = wordsStore.wordCompilationAssociations.find(
+						(item) => item.compilationTitle === compilation,
+					);
+
+					const associationId = association!.relationsId;
+					dispatch(deleteWordCompilationAssociation(associationId));
+				};
+
+				const filteredAssociations = wordsStore.wordCompilationAssociations.filter(
+					(item) => item.wordId === record.id,
+				);
+
+				const defaultValue = filteredAssociations.map((item) => item.compilationTitle);
+
+				return (
+					<Select
+						style={{ width: 200 }}
+						mode="multiple"
+						options={options}
+						defaultValue={defaultValue}
+						onSelect={handleSelect}
+						onDeselect={handleDeselect}
+					/>
+				);
+			},
+		},
+		{
 			title: 'Редактировать',
 			key: 'edit',
 			render: (record: IRecordType) => <UpdateModal record={record} />,
@@ -99,6 +166,12 @@ const Words = () => {
 	const dataSource = wordsStore.words.map((word) => ({
 		...word,
 		key: word.id,
+	}));
+
+	const options = wordCompilationsStore.compilations.map((compilation) => ({
+		value: compilation.title,
+		label: compilation.title,
+		id: compilation.id,
 	}));
 
 	return (

@@ -6,6 +6,7 @@ export interface IRecordType {
 	titleInEnglish: string;
 	description: string;
 	image: string;
+	groups: [number[]] | [];
 }
 
 export interface IUpdateFieldType {

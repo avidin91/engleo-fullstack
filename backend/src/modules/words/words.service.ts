@@ -7,14 +7,25 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Words } from './entities/words.entity';
-import { CreateWordDto } from './dto/word/create-word.dto';
-import { UpdateWordDto } from './dto/word/update-word.dto';
+import { CreateWordDto } from './dto/create-word.dto';
+import { UpdateWordDto } from './dto/update-word.dto';
+import { WordCompilationsAssociation } from './entities/word-compilations-associations.entity';
+import { ICompilationGroupIds } from '../compilations/types';
+import { CompilationsGroupsAssociation } from '../compilations/entities/compilations-groups-associations.entity';
+import { IWordCompilationIds } from './types';
+import { Compilations } from '../compilations/entities/compilations.entity';
 
 @Injectable()
 export class WordsService {
     constructor(
         @InjectRepository(Words)
         private readonly wordsRepository: Repository<Words>,
+
+        @InjectRepository(WordCompilationsAssociation)
+        private readonly wordCompilationsRepository: Repository<WordCompilationsAssociation>,
+
+        @InjectRepository(Compilations)
+        private readonly compilationsRepository: Repository<Compilations>,
     ) {}
 
     async createWord(createWordDto: CreateWordDto) {
@@ -71,5 +82,59 @@ export class WordsService {
         }
 
         return result;
+    }
+
+    async getAllWordsCompilationsAssociations() {
+        const data = await this.wordCompilationsRepository.find({
+            relations: ['compilation', 'word'],
+        });
+
+        return data.map((association) => {
+            return {
+                relationsId: association.id,
+                compilationId: association.compilation.id,
+                compilationTitle: association.compilation.title,
+                wordId: association.word.id,
+            };
+        });
+    }
+
+    async createWordCompilationAssociation(
+        wordCompilationIds: IWordCompilationIds,
+    ) {
+        const { compilationId, wordId } = wordCompilationIds;
+
+        const compilation = await this.compilationsRepository.findOne({
+            where: { id: compilationId },
+        });
+        if (!compilation) {
+            throw new NotFoundException(
+                `Compilation with id ${compilationId} not found`,
+            );
+        }
+
+        const word = await this.wordsRepository.findOne({
+            where: { id: wordId },
+        });
+        if (!word) {
+            throw new NotFoundException(`Word with id ${wordId} not found`);
+        }
+
+        const association = new WordCompilationsAssociation();
+        association.compilation = compilation;
+        association.word = word;
+
+        await this.wordCompilationsRepository.save(association);
+        return { message: 'Association created successfully' };
+    }
+
+    async deleteWordCompilationAssociation(id: number) {
+        const result = await this.wordCompilationsRepository.delete({ id });
+
+        if (result.affected === 0) {
+            throw new NotFoundException(`Association with id ${id} not found`);
+        }
+
+        return { message: 'Association deleted successfully' };
     }
 }

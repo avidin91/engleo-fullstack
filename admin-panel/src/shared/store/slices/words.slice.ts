@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { instance } from '@shared/api/axios-api';
 import { message } from 'antd';
+import { fetchGroupsCompilationsAssociations } from '@shared/store/slices/word-compilations.slice';
 
 interface IWord {
 	id: number;
@@ -13,8 +14,19 @@ interface IWord {
 
 interface IWordRequest extends Omit<IWord, 'id'> {}
 
+interface IWordCompilationAssociations {
+	compilationId: number;
+	wordId: number;
+	compilationTitle: string;
+	relationsId: number;
+}
+
+interface ICreateWordCompilationAssociation
+	extends Pick<IWordCompilationAssociations, 'compilationId' | 'wordId'> {}
+
 interface IWordsState {
 	words: IWord[];
+	wordCompilationAssociations: IWordCompilationAssociations[];
 	isLoading: boolean;
 }
 
@@ -63,9 +75,48 @@ export const updateWord = createAsyncThunk('words/updateWord', async (data: IWor
 	}
 });
 
-const initialState: IWordsState | null = {
+export const fetchWordsCompilationsAssociations = createAsyncThunk(
+	'words/fetchWordsCompilationsAssociations',
+	async () => {
+		try {
+			const response = await instance.get('words/compilations');
+			return response.data;
+		} catch (e: any) {
+			message.error(e.response.data.message);
+		}
+	},
+);
+
+export const createWordCompilationAssociation = createAsyncThunk(
+	'words/createWordCompilationAssociation',
+	async (data: ICreateWordCompilationAssociation, thunkAPI) => {
+		try {
+			await instance.post('words/compilations', data);
+			thunkAPI.dispatch(fetchWordsCompilationsAssociations());
+			message.success('Связь с подборкой успешно добавлена');
+		} catch (e: any) {
+			message.error(e.response.data.message);
+		}
+	},
+);
+
+export const deleteWordCompilationAssociation = createAsyncThunk(
+	'words/deleteWordCompilationAssociation',
+	async (associationId: number, thunkAPI) => {
+		try {
+			await instance.delete(`words/compilations/${associationId}`);
+			thunkAPI.dispatch(fetchWordsCompilationsAssociations());
+			message.success('Связь с подборкой успешно удалена');
+		} catch (e: any) {
+			message.error(e.response.data.message);
+		}
+	},
+);
+
+const initialState: IWordsState = {
 	words: [],
 	isLoading: false,
+	wordCompilationAssociations: [],
 };
 
 const wordsSlice = createSlice({
@@ -83,6 +134,13 @@ const wordsSlice = createSlice({
 			})
 			.addCase(fetchWords.rejected, (state, action) => {
 				state.isLoading = false;
+			})
+			.addCase(fetchWordsCompilationsAssociations.pending, (state, action) => {
+				state.isLoading = true;
+			})
+			.addCase(fetchWordsCompilationsAssociations.fulfilled, (state, action) => {
+				state.isLoading = false;
+				state.wordCompilationAssociations = action.payload;
 			});
 	},
 });

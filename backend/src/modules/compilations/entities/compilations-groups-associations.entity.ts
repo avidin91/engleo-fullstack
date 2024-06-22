@@ -13,5 +13,5 @@ export class CompilationsGroupsAssociation {
 
     @ManyToOne(() => Groups, (group) => group.id)
     @JoinColumn({ name: 'group_id' })
-    word: Groups;
+    group: Groups;
 }

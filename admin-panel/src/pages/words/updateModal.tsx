@@ -14,7 +14,6 @@ interface IUpdateModal {
 }
 
 const UpdateModal: FC<IUpdateModal> = ({ record }) => {
-	console.log('record = ', record);
 	const dispatch = useAppDispatch();
 	const [open, setOpen] = useState(false);
 

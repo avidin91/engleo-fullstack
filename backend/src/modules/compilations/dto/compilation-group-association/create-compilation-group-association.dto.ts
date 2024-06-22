@@ -3,5 +3,5 @@ import { Groups } from '../../../groups/entities/groups.entity';
 
 export class CreateCompilationGroupAssociationDto {
     compilation: Compilations;
-    word: Groups;
+    group: Groups;
 }

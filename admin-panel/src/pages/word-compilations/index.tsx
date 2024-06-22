@@ -1,5 +1,16 @@
-import React, { useEffect } from 'react';
-import { Button, Flex, Form, FormProps, Image, Input, Table, Upload } from 'antd';
+import React, { useEffect, useState } from 'react';
+import {
+	Button,
+	Flex,
+	Form,
+	FormProps,
+	Image,
+	Input,
+	Select,
+	Table,
+	Typography,
+	Upload,
+} from 'antd';
 import { slugifyString } from '@shared/utils/slugifyString';
 import { useAppDispatch, useAppSelector } from '@shared/store/hooks';
 import { IRecordType } from './types';
@@ -9,10 +20,17 @@ import {
 	createWordCompilation,
 	deleteCompilation,
 	fetchWordCompilations,
+	fetchGroupsCompilationsAssociations,
+	fetchWordGroups,
+	createGroupCompilationAssociation,
+	deleteGroupCompilationAssociation,
 } from '@shared/store/slices/word-compilations.slice';
 import ImgCrop from 'antd-img-crop';
 import { getTokenFromLocalStorage } from '@shared/utils/localstorage.helper';
 import { useForm } from 'antd/es/form/Form';
+import { debounce } from 'lodash';
+
+const { Title } = Typography;
 
 interface IFieldType {
 	title: string;
@@ -24,9 +42,16 @@ const WordCompilations = () => {
 	const wordCompilationsStore = useAppSelector((state) => state.wordCompilationsStore);
 	const dispatch = useAppDispatch();
 	const [form] = useForm();
+	const [isDataLoaded, setIsDataLoaded] = useState(false); // FIXME убрать локальное состояние, если возвожно
 
 	useEffect(() => {
-		dispatch(fetchWordCompilations());
+		Promise.all([
+			dispatch(fetchWordCompilations()),
+			dispatch(fetchWordGroups()),
+			dispatch(fetchGroupsCompilationsAssociations()),
+		]).then(() => {
+			setIsDataLoaded(true);
+		});
 	}, []);
 
 	const onFinish: FormProps<IFieldType>['onFinish'] = (values) => {
@@ -36,6 +61,7 @@ const WordCompilations = () => {
 			image: form.getFieldValue('image'),
 			slug: slugifyString(values.title),
 		};
+
 		dispatch(createWordCompilation(data));
 	};
 
@@ -77,12 +103,58 @@ const WordCompilations = () => {
 		{
 			title: 'Миниатюра',
 			key: 'mini-image',
-			render: ({ image }: { image: string }) => {
+			render: ({ image }: { image: string }) => (
+				<Image
+					src={`http://localhost:3009/static/${image}`}
+					width={60}
+					style={{ border: '1px solid', borderRadius: 6 }}
+				/>
+			),
+		},
+		{
+			title: 'Группы подборок',
+			key: 'edit',
+			render: (record: IRecordType) => {
+				if (!isDataLoaded) return null;
+
+				const handleSelect = (groupTitle: string) => {
+					const selectedGroup = options.find((option) => option.value === groupTitle);
+					const groupId = selectedGroup!.id;
+
+					const debouncedDispatch = () => {
+						dispatch(
+							createGroupCompilationAssociation({
+								compilationId: record.id,
+								groupId,
+							}),
+						);
+					};
+					debounce(debouncedDispatch, 300)();
+				};
+
+				const handleDeselect = (group: any) => {
+					const association = wordCompilationsStore.groupsCompilationsAssociations.find(
+						(item) => item.groupTitle === group,
+					);
+					const associationId = association!.relationsId;
+					dispatch(deleteGroupCompilationAssociation(associationId));
+				};
+
+				const filteredAssociations =
+					wordCompilationsStore.groupsCompilationsAssociations.filter(
+						(item) => item.compilationId === record.id,
+					);
+
+				const defaultValue = filteredAssociations.map((item) => item.groupTitle);
+
 				return (
-					<Image
-						src={`http://localhost:3009/static/${image}`}
-						width={60}
-						style={{ border: '1px solid', borderRadius: 6 }}
+					<Select
+						style={{ width: 200 }}
+						mode="multiple"
+						options={options}
+						defaultValue={defaultValue}
+						onSelect={handleSelect}
+						onDeselect={handleDeselect}
 					/>
 				);
 			},
@@ -113,10 +185,17 @@ const WordCompilations = () => {
 		key: compilation.id,
 	}));
 
+	const options = wordCompilationsStore.groups.map((group) => ({
+		value: group.title,
+		label: group.title,
+		id: group.id,
+	}));
+
 	return (
 		<Flex vertical gap={32}>
+			<Title style={{ alignSelf: 'center', marginTop: 0 }}>Подборки слов</Title>
 			<Form
-				name="group"
+				name="compilation"
 				labelCol={{ span: 8 }}
 				wrapperCol={{ span: 16 }}
 				style={{ maxWidth: 600 }}

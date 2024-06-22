@@ -1,7 +1,11 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { instance } from '@shared/api/axios-api';
 import { message } from 'antd';
-import { fetchGroups } from '@shared/store/slices/word-groups.slice';
+
+interface IGroup {
+	id: number;
+	title: string;
+}
 
 interface IWordCompilation {
 	id: number;
@@ -12,10 +16,22 @@ interface IWordCompilation {
 	image: string;
 }
 
+interface IGroupsCompilationsAssociations {
+	compilationId: number;
+	groupId: number;
+	groupTitle: string;
+	relationsId: number;
+}
+
+interface ICreateCroupCompilationAssociation
+	extends Pick<IGroupsCompilationsAssociations, 'compilationId' | 'groupId'> {}
+
 interface IWordCompilationRequest extends Omit<IWordCompilation, 'id'> {}
 
 interface ICompilationState {
 	compilations: IWordCompilation[];
+	groups: IGroup[];
+	groupsCompilationsAssociations: IGroupsCompilationsAssociations[];
 	isLoading: boolean;
 }
 
@@ -23,13 +39,22 @@ export const fetchWordCompilations = createAsyncThunk(
 	'compilations/fetchWordCompilations',
 	async () => {
 		try {
-			const response = await instance.get('compilations');
-			return response.data;
+			const responseCompilations = await instance.get('compilations');
+			return responseCompilations.data;
 		} catch (e: any) {
 			message.error(e.response.data.message);
 		}
 	},
 );
+
+export const fetchWordGroups = createAsyncThunk('compilations/fetchWordGroups', async () => {
+	try {
+		const response = await instance.get('groups');
+		return response.data.map((group: any) => ({ id: group.id, title: group.title }));
+	} catch (e: any) {
+		message.error(e.response.data.message);
+	}
+});
 
 export const createWordCompilation = createAsyncThunk(
 	'compilations/createWordCompilation',
@@ -73,9 +98,49 @@ export const updateCompilation = createAsyncThunk(
 	},
 );
 
-const initialState: ICompilationState | null = {
+export const fetchGroupsCompilationsAssociations = createAsyncThunk(
+	'compilations/fetchWordCompilationsGroups',
+	async () => {
+		try {
+			const response = await instance.get('compilations/groups');
+			return response.data;
+		} catch (e: any) {
+			message.error(e.response.data.message);
+		}
+	},
+);
+
+export const createGroupCompilationAssociation = createAsyncThunk(
+	'compilations/createGroupCompilationAssociation',
+	async (data: ICreateCroupCompilationAssociation, thunkAPI) => {
+		try {
+			await instance.post('compilations/groups', data);
+			thunkAPI.dispatch(fetchGroupsCompilationsAssociations());
+			message.success('Связь с группой успешно добавлена');
+		} catch (e: any) {
+			message.error(e.response.data.message);
+		}
+	},
+);
+
+export const deleteGroupCompilationAssociation = createAsyncThunk(
+	'compilations/deleteGroupCompilationAssociation',
+	async (associationId: number, thunkAPI) => {
+		try {
+			await instance.delete(`compilations/groups/${associationId}`);
+			thunkAPI.dispatch(fetchGroupsCompilationsAssociations());
+			message.success('Связь с группой успешно удалена');
+		} catch (e: any) {
+			message.error(e.response.data.message);
+		}
+	},
+);
+
+const initialState: ICompilationState = {
 	compilations: [],
 	isLoading: false,
+	groups: [],
+	groupsCompilationsAssociations: [],
 };
 
 const wordCompilationsSlice = createSlice({
@@ -93,6 +158,23 @@ const wordCompilationsSlice = createSlice({
 			})
 			.addCase(fetchWordCompilations.rejected, (state, action) => {
 				state.isLoading = false;
+			})
+			.addCase(fetchWordGroups.pending, (state) => {
+				state.isLoading = true;
+			})
+			.addCase(fetchWordGroups.fulfilled, (state, action) => {
+				state.groups = action.payload;
+				state.isLoading = false;
+			})
+			.addCase(fetchWordGroups.rejected, (state, action) => {
+				state.isLoading = false;
+			})
+			.addCase(fetchGroupsCompilationsAssociations.pending, (state, action) => {
+				state.isLoading = true;
+			})
+			.addCase(fetchGroupsCompilationsAssociations.fulfilled, (state, action) => {
+				state.isLoading = false;
+				state.groupsCompilationsAssociations = action.payload;
 			});
 	},
 });

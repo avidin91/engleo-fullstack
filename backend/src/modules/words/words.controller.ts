@@ -9,11 +9,13 @@ import {
     Put,
 } from '@nestjs/common';
 import { WordsService } from './words.service';
-import { CreateWordDto } from './dto/word/create-word.dto';
-import { UpdateWordDto } from './dto/word/update-word.dto';
+import { CreateWordDto } from './dto/create-word.dto';
+import { UpdateWordDto } from './dto/update-word.dto';
 import { Roles } from '../../rbac/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../rbac/roles.guard';
+import { ICompilationGroupIds } from '../compilations/types';
+import { IWordCompilationIds } from './types';
 
 @Controller('words')
 export class WordsController {
@@ -46,5 +48,28 @@ export class WordsController {
         @Body() updateWordDto: UpdateWordDto,
     ) {
         return await this.wordsService.updateWord(id, updateWordDto);
+    }
+
+    @Get('compilations')
+    async getAllWordsCompilationsAssociations() {
+        return await this.wordsService.getAllWordsCompilationsAssociations();
+    }
+
+    @Post('compilations')
+    @Roles('ADMIN')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    async createWordCompilationAssociation(
+        @Body() wordCompilationIds: IWordCompilationIds,
+    ) {
+        return await this.wordsService.createWordCompilationAssociation(
+            wordCompilationIds,
+        );
+    }
+
+    @Delete('compilations/:id')
+    @Roles('ADMIN')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    async deleteWordCompilationAssociation(@Param('id') id: number) {
+        return await this.wordsService.deleteWordCompilationAssociation(id);
     }
 }
