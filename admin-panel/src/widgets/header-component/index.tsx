@@ -1,7 +1,7 @@
 import React from 'react';
 import { Avatar, Button, ConfigProvider, Dropdown, Flex, Layout } from 'antd';
 import logo from '@shared/img/logo.svg';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './styles.css';
 import { UserOutlined } from '@ant-design/icons';
 import { useAppDispatch } from '@shared/store/hooks';
@@ -52,15 +52,13 @@ const HeaderComponent = () => {
 		>
 			<Header className="header-component">
 				<Flex gap={16} align="center">
-					<Link to={'/'} className="header-component-link">
-						<Avatar
-							src={logo}
-							alt="logo"
-							size="large"
-							shape="square"
-							className="header-component-avatar"
-						></Avatar>
-					</Link>
+					<Avatar
+						src={logo}
+						alt="logo"
+						size="large"
+						shape="square"
+						className="header-component-avatar"
+					></Avatar>
 				</Flex>
 
 				<Flex align="center" gap={8}>

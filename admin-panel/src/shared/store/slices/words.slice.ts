@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { instance } from '@shared/api/axios-api';
 import { message } from 'antd';
-import { fetchGroupsCompilationsAssociations } from '@shared/store/slices/word-compilations.slice';
 
 interface IWord {
 	id: number;
@@ -132,10 +131,10 @@ const wordsSlice = createSlice({
 				state.words = action.payload;
 				state.isLoading = false;
 			})
-			.addCase(fetchWords.rejected, (state, action) => {
+			.addCase(fetchWords.rejected, (state) => {
 				state.isLoading = false;
 			})
-			.addCase(fetchWordsCompilationsAssociations.pending, (state, action) => {
+			.addCase(fetchWordsCompilationsAssociations.pending, (state) => {
 				state.isLoading = true;
 			})
 			.addCase(fetchWordsCompilationsAssociations.fulfilled, (state, action) => {

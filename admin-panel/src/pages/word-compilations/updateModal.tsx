@@ -120,7 +120,7 @@ const UpdateModal: FC<IUpdateModal> = ({ record }) => {
 								listType="picture-card"
 								onChange={(info) => {
 									if (info.file.status === 'done') {
-										form.setFieldValue('image', info.file.response[1].url);
+										form.setFieldValue('image', info.file.response[0].url);
 									}
 								}}
 							>

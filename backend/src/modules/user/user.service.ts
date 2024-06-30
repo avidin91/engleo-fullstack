@@ -44,6 +44,14 @@ export class UserService {
         }
     }
 
+    async getAllUsers() {
+        return await this.userRepository.find({
+            order: {
+                id: 'DESC',
+            },
+        });
+    }
+
     async findOne(email: string) {
         return await this.userRepository.findOne({ where: { email } });
     }

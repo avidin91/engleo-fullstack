@@ -64,6 +64,7 @@ export const createWordCompilation = createAsyncThunk(
 			thunkAPI.dispatch(fetchWordCompilations());
 			return response.data;
 		} catch (e: any) {
+			console.log('тут = ', e.response.data.message);
 			message.error(e.response.data.message);
 		}
 	},
@@ -156,7 +157,7 @@ const wordCompilationsSlice = createSlice({
 				state.compilations = action.payload;
 				state.isLoading = false;
 			})
-			.addCase(fetchWordCompilations.rejected, (state, action) => {
+			.addCase(fetchWordCompilations.rejected, (state) => {
 				state.isLoading = false;
 			})
 			.addCase(fetchWordGroups.pending, (state) => {
@@ -166,15 +167,27 @@ const wordCompilationsSlice = createSlice({
 				state.groups = action.payload;
 				state.isLoading = false;
 			})
-			.addCase(fetchWordGroups.rejected, (state, action) => {
+			.addCase(fetchWordGroups.rejected, (state) => {
 				state.isLoading = false;
 			})
-			.addCase(fetchGroupsCompilationsAssociations.pending, (state, action) => {
+			.addCase(fetchGroupsCompilationsAssociations.pending, (state) => {
 				state.isLoading = true;
 			})
 			.addCase(fetchGroupsCompilationsAssociations.fulfilled, (state, action) => {
 				state.isLoading = false;
 				state.groupsCompilationsAssociations = action.payload;
+			})
+			.addCase(deleteGroupCompilationAssociation.pending, (state) => {
+				state.isLoading = true;
+			})
+			.addCase(deleteGroupCompilationAssociation.fulfilled, (state) => {
+				state.isLoading = false;
+			})
+			.addCase(createGroupCompilationAssociation.pending, (state) => {
+				state.isLoading = true;
+			})
+			.addCase(createGroupCompilationAssociation.fulfilled, (state) => {
+				state.isLoading = false;
 			});
 	},
 });

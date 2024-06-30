@@ -1,15 +1,8 @@
 import React from 'react';
 import { Menu, MenuProps, theme } from 'antd';
 import Sider from 'antd/es/layout/Sider';
-import {
-	ApartmentOutlined,
-	BarsOutlined,
-	BlockOutlined,
-	BuildOutlined,
-	CreditCardOutlined,
-	UserOutlined,
-} from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import { ApartmentOutlined, BarsOutlined, BlockOutlined, UserOutlined } from '@ant-design/icons';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const menu = [
 	{
@@ -36,18 +29,18 @@ const menu = [
 		icon: BarsOutlined,
 		slug: 'words',
 	},
-	{
-		id: 5,
-		title: 'Группы правил',
-		icon: BuildOutlined,
-		slug: 'rules-groups',
-	},
-	{
-		id: 6,
-		title: 'Правила',
-		icon: CreditCardOutlined,
-		slug: 'rules',
-	},
+	// {
+	// 	id: 5,
+	// 	title: 'Группы правил',
+	// 	icon: BuildOutlined,
+	// 	slug: 'rules-groups',
+	// },
+	// {
+	// 	id: 6,
+	// 	title: 'Правила',
+	// 	icon: CreditCardOutlined,
+	// 	slug: 'rules',
+	// },
 ];
 
 const menuItems: MenuProps['items'] = menu.map(({ title, icon, id }) => {
@@ -60,6 +53,10 @@ const menuItems: MenuProps['items'] = menu.map(({ title, icon, id }) => {
 
 const SiderMenu = () => {
 	const navigate = useNavigate();
+	const { pathname } = useLocation();
+
+	const currentMenuItem = menu.find((item) => `/${item.slug}` === pathname);
+
 	const {
 		token: { colorBgContainer },
 	} = theme.useToken();
@@ -75,8 +72,8 @@ const SiderMenu = () => {
 		<Sider width={200} style={{ background: colorBgContainer }}>
 			<Menu
 				mode="inline"
-				defaultSelectedKeys={['1']}
-				defaultOpenKeys={['1']}
+				defaultSelectedKeys={[`${currentMenuItem?.id}`]}
+				defaultOpenKeys={[`${currentMenuItem?.id}`]}
 				style={{ height: '100%', borderRight: 0 }}
 				items={menuItems}
 				onSelect={onMenuSelect}

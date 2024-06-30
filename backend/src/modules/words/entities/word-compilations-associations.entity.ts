@@ -1,8 +1,15 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+    Entity,
+    Index,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Words } from './words.entity';
 import { Compilations } from '../../compilations/entities/compilations.entity';
 
 @Entity()
+@Index(['word', 'compilation'], { unique: true })
 export class WordCompilationsAssociation {
     @PrimaryGeneratedColumn()
     id: number;

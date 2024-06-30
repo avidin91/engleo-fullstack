@@ -1,16 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-	Button,
-	Flex,
-	Form,
-	FormProps,
-	Image,
-	Input,
-	Select,
-	Table,
-	Typography,
-	Upload,
-} from 'antd';
+import { Button, Flex, Form, FormProps, Image, Input, Table, Typography, Upload } from 'antd';
 import { slugifyString } from '@shared/utils/slugifyString';
 import { useAppDispatch, useAppSelector } from '@shared/store/hooks';
 import { IRecordType } from './types';
@@ -22,13 +11,11 @@ import {
 	fetchWordCompilations,
 	fetchGroupsCompilationsAssociations,
 	fetchWordGroups,
-	createGroupCompilationAssociation,
-	deleteGroupCompilationAssociation,
 } from '@shared/store/slices/word-compilations.slice';
 import ImgCrop from 'antd-img-crop';
 import { getTokenFromLocalStorage } from '@shared/utils/localstorage.helper';
 import { useForm } from 'antd/es/form/Form';
-import { debounce } from 'lodash';
+import { AssociationEditorColumn } from '@widgets/associationEditorColumn';
 
 const { Title } = Typography;
 
@@ -114,50 +101,8 @@ const WordCompilations = () => {
 		{
 			title: 'Группы подборок',
 			key: 'edit',
-			render: (record: IRecordType) => {
-				if (!isDataLoaded) return null;
-
-				const handleSelect = (groupTitle: string) => {
-					const selectedGroup = options.find((option) => option.value === groupTitle);
-					const groupId = selectedGroup!.id;
-
-					const debouncedDispatch = () => {
-						dispatch(
-							createGroupCompilationAssociation({
-								compilationId: record.id,
-								groupId,
-							}),
-						);
-					};
-					debounce(debouncedDispatch, 300)();
-				};
-
-				const handleDeselect = (group: any) => {
-					const association = wordCompilationsStore.groupsCompilationsAssociations.find(
-						(item) => item.groupTitle === group,
-					);
-					const associationId = association!.relationsId;
-					dispatch(deleteGroupCompilationAssociation(associationId));
-				};
-
-				const filteredAssociations =
-					wordCompilationsStore.groupsCompilationsAssociations.filter(
-						(item) => item.compilationId === record.id,
-					);
-
-				const defaultValue = filteredAssociations.map((item) => item.groupTitle);
-
-				return (
-					<Select
-						style={{ width: 200 }}
-						mode="multiple"
-						options={options}
-						defaultValue={defaultValue}
-						onSelect={handleSelect}
-						onDeselect={handleDeselect}
-					/>
-				);
-			},
+			render: (record: IRecordType) =>
+				isDataLoaded ? <AssociationEditorColumn record={record} /> : null,
 		},
 		{
 			title: 'Редактировать',
@@ -183,12 +128,6 @@ const WordCompilations = () => {
 	const dataSource = wordCompilationsStore.compilations.map((compilation) => ({
 		...compilation,
 		key: compilation.id,
-	}));
-
-	const options = wordCompilationsStore.groups.map((group) => ({
-		value: group.title,
-		label: group.title,
-		id: group.id,
 	}));
 
 	return (
@@ -245,7 +184,7 @@ const WordCompilations = () => {
 							listType="picture-card"
 							onChange={(info) => {
 								if (info.file.status === 'done') {
-									form.setFieldValue('image', info.file.response[1].url);
+									form.setFieldValue('image', info.file.response[0].url);
 								}
 							}}
 						>

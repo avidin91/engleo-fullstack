@@ -1,6 +1,5 @@
 import React, { FC, useState } from 'react';
 import { Button, Form, FormProps, Input, Modal, Upload } from 'antd';
-import { slugifyString } from '@shared/utils/slugifyString';
 import { useAppDispatch } from '@shared/store/hooks';
 import { EditOutlined } from '@ant-design/icons';
 import { IRecordType, IUpdateFieldType } from './types';
@@ -124,7 +123,7 @@ const UpdateModal: FC<IUpdateModal> = ({ record }) => {
 								listType="picture-card"
 								onChange={(info) => {
 									if (info.file.status === 'done') {
-										form.setFieldValue('image', info.file.response[1].url);
+										form.setFieldValue('image', info.file.response[0].url);
 									}
 								}}
 							>

@@ -19,6 +19,11 @@ export class UserController {
         return this.userService.create(createUserDto);
     }
 
+    @Get()
+    getAllUsers() {
+        return this.userService.getAllUsers();
+    }
+
     // @Get()
     // findOne() {
     //   return this.userService.findOne();
