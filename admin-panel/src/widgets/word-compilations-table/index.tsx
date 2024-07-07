@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Image, Table } from 'antd';
+import { Button, GetProp, Image, message, Table, TableProps } from 'antd';
 import { IRecordType } from '@pages/word-compilations/types';
 import UpdateModal from '@pages/word-compilations/updateModal';
 import {
@@ -11,9 +11,13 @@ import {
 } from '@shared/store/slices/word-compilations.slice';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '@shared/store/hooks';
-import { fetchGroups } from '@shared/store/slices/word-groups.slice';
+import { fetchAllGroups } from '@shared/store/slices/word-groups.slice';
 import { CreateAssociationColumn } from '../../feature/create-association-column';
 import { debounce } from 'lodash';
+
+type TablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>;
+
+const PAGE_SIZE = 10;
 
 export const WordCompilationsTable = () => {
 	const wordCompilationsStore = useAppSelector((state) => state.wordCompilationsStore);
@@ -23,15 +27,22 @@ export const WordCompilationsTable = () => {
 
 	useEffect(() => {
 		Promise.all([
-			dispatch(fetchWordCompilations()),
-			dispatch(fetchGroups()),
+			dispatch(
+				fetchWordCompilations({
+					pagination: {
+						pageSize: 10,
+						current: 1,
+					},
+				}),
+			),
+			dispatch(fetchAllGroups()),
 			dispatch(fetchGroupsCompilationsAssociations()),
 		]).then(() => {
 			setIsDataLoaded(true);
 		});
 	}, []);
 
-	const { groupsCompilationsAssociations } = wordCompilationsStore;
+	const { groupsCompilationsAssociations, totalWords, currentPage } = wordCompilationsStore;
 
 	const columns = [
 		{
@@ -141,5 +152,34 @@ export const WordCompilationsTable = () => {
 		key: compilation.id,
 	}));
 
-	return <Table dataSource={dataSource} columns={columns} />;
+	const handleChange = (pagination: TablePaginationConfig) => {
+		if (pagination.pageSize && pagination.current) {
+			dispatch(
+				fetchWordCompilations({
+					pagination: {
+						pageSize: pagination.pageSize,
+						current: pagination.current,
+					},
+				}),
+			);
+		} else {
+			message.error('Произошла ошибка');
+		}
+	};
+
+	return (
+		<Table
+			dataSource={dataSource}
+			columns={columns}
+			onChange={handleChange}
+			pagination={{
+				pageSize: PAGE_SIZE,
+				current: currentPage,
+				total: totalWords,
+				showSizeChanger: false,
+				showQuickJumper: false,
+				position: ['topRight', 'bottomRight'],
+			}}
+		/>
+	);
 };

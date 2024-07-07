@@ -2,6 +2,13 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { instance } from '@shared/api/axios-api';
 import { message } from 'antd';
 
+interface IGetWordsParams {
+	pagination: {
+		pageSize: number;
+		current: number;
+	};
+}
+
 interface IWord {
 	id: number;
 	word: string;
@@ -25,37 +32,34 @@ interface ICreateWordCompilationAssociation
 
 interface IWordsState {
 	words: IWord[];
+	currentPage: number;
+	totalWords: number;
 	wordCompilationAssociations: IWordCompilationAssociations[];
 	isLoading: boolean;
 }
 
-export const fetchWords = createAsyncThunk('words/fetchWords', async () => {
+export const fetchWords = createAsyncThunk('words/fetchWords', async (data: IGetWordsParams) => {
 	try {
-		const response = await instance.get('words');
+		const response = await instance.post('words', data);
 		return response.data;
 	} catch (e: any) {
 		message.error(e.response.data.message);
 	}
 });
 
-export const createWord = createAsyncThunk(
-	'words/createWord',
-	async (data: IWordRequest, thunkAPI) => {
-		try {
-			const response = await instance.post('words', data);
-			thunkAPI.dispatch(fetchWords());
-			return response.data;
-		} catch (e: any) {
-			message.error(e.response.data.message);
-		}
-	},
-);
+export const createWord = createAsyncThunk('words/createWord', async (data: IWordRequest) => {
+	try {
+		const response = await instance.post('words/new', data);
+		return response.data;
+	} catch (e: any) {
+		message.error(e.response.data.message);
+	}
+});
 
-export const deleteWord = createAsyncThunk('words/deleteWord', async (id: number, thunkAPI) => {
+export const deleteWord = createAsyncThunk('words/deleteWord', async (id: number) => {
 	try {
 		const response = await instance.delete(`words/${id}`);
 		message.success('Слово успешно удалено');
-		thunkAPI.dispatch(fetchWords());
 		return response.data;
 	} catch (e: any) {
 		// TODO месседж не должен быть вне компонента
@@ -63,11 +67,10 @@ export const deleteWord = createAsyncThunk('words/deleteWord', async (id: number
 	}
 });
 
-export const updateWord = createAsyncThunk('words/updateWord', async (data: IWord, thunkAPI) => {
+export const updateWord = createAsyncThunk('words/updateWord', async (data: IWord) => {
 	try {
 		await instance.put(`words/${data.id}`, data);
 		message.success('Слово успешно обновлено');
-		thunkAPI.dispatch(fetchWords());
 	} catch (e: any) {
 		// TODO месседж не должен быть вне компонента
 		message.error(e.response.data.message);
@@ -114,6 +117,8 @@ export const deleteWordCompilationAssociation = createAsyncThunk(
 
 const initialState: IWordsState = {
 	words: [],
+	currentPage: 1,
+	totalWords: 0,
 	isLoading: false,
 	wordCompilationAssociations: [],
 };
@@ -128,7 +133,9 @@ const wordsSlice = createSlice({
 				state.isLoading = true;
 			})
 			.addCase(fetchWords.fulfilled, (state, action) => {
-				state.words = action.payload;
+				state.words = action.payload.words;
+				state.currentPage = action.payload.current;
+				state.totalWords = action.payload.total;
 				state.isLoading = false;
 			})
 			.addCase(fetchWords.rejected, (state) => {

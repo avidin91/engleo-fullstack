@@ -14,8 +14,8 @@ import { UpdateWordDto } from './dto/update-word.dto';
 import { Roles } from '../../rbac/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../rbac/roles.guard';
-import { ICompilationGroupIds } from '../compilations/types';
 import { IWordCompilationIds } from './types';
+import { GetWordsDto } from './dto/get-words.dto';
 
 @Controller('words')
 export class WordsController {
@@ -24,26 +24,28 @@ export class WordsController {
     @Post()
     @Roles('ADMIN')
     @UseGuards(JwtAuthGuard, RolesGuard)
-    createCompilation(@Body() createWordDto: CreateWordDto) {
-        return this.wordsService.createWord(createWordDto);
+    getWords(@Body() getWordsDto: GetWordsDto) {
+        return this.wordsService.getWords(getWordsDto.pagination);
     }
 
-    @Get()
-    async getAllCompilations() {
-        return await this.wordsService.getAllWords();
+    @Post('new')
+    @Roles('ADMIN')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    createWord(@Body() createWordDto: CreateWordDto) {
+        return this.wordsService.createWord(createWordDto);
     }
 
     @Delete(':id')
     @Roles('ADMIN')
     @UseGuards(JwtAuthGuard, RolesGuard)
-    async deleteCompilation(@Param('id') id: number) {
+    async deleteWord(@Param('id') id: number) {
         return await this.wordsService.deleteWord(id);
     }
 
     @Put(':id')
     @Roles('ADMIN')
     @UseGuards(JwtAuthGuard, RolesGuard)
-    async updateGroup(
+    async updateWord(
         @Param('id') id: number,
         @Body() updateWordDto: UpdateWordDto,
     ) {

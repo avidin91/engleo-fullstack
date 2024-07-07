@@ -10,9 +10,6 @@ import { Words } from './entities/words.entity';
 import { CreateWordDto } from './dto/create-word.dto';
 import { UpdateWordDto } from './dto/update-word.dto';
 import { WordCompilationsAssociation } from './entities/word-compilations-associations.entity';
-import { ICompilationGroupIds } from '../compilations/types';
-import { CompilationsGroupsAssociation } from '../compilations/entities/compilations-groups-associations.entity';
-import { IWordCompilationIds } from './types';
 import { Compilations } from '../compilations/entities/compilations.entity';
 
 @Injectable()
@@ -27,6 +24,31 @@ export class WordsService {
         @InjectRepository(Compilations)
         private readonly compilationsRepository: Repository<Compilations>,
     ) {}
+
+    async getWords({
+        pageSize = 10,
+        current = 1,
+    }: {
+        pageSize: number;
+        current: number;
+    }) {
+        const skip = pageSize * (current - 1);
+        const words = await this.wordsRepository.find({
+            order: {
+                id: 'DESC',
+            },
+            skip, // пропуск указанного количества записей
+            take: pageSize, // взять указанное количество записей
+        });
+
+        const total = await this.wordsRepository.count();
+
+        return {
+            current,
+            words,
+            total,
+        };
+    }
 
     async createWord(createWordDto: CreateWordDto) {
         const word = await this.wordsRepository.findOne({
@@ -53,14 +75,6 @@ export class WordsService {
                 'Failed to create user due to internal server error',
             );
         }
-    }
-
-    async getAllWords() {
-        return await this.wordsRepository.find({
-            order: {
-                id: 'DESC',
-            },
-        });
     }
 
     async deleteWord(id: number) {

@@ -2,6 +2,13 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { instance } from '@shared/api/axios-api';
 import { message } from 'antd';
 
+interface IGetCompilationsParams {
+	pagination: {
+		pageSize: number;
+		current: number;
+	};
+}
+
 interface IWordCompilation {
 	id: number;
 	title: string;
@@ -25,12 +32,26 @@ interface IWordCompilationRequest extends Omit<IWordCompilation, 'id'> {}
 
 interface ICompilationState {
 	compilations: IWordCompilation[];
+	currentPage: number;
+	totalWords: number;
 	groupsCompilationsAssociations: IGroupsCompilationsAssociations[];
 	isLoading: boolean;
 }
 
 export const fetchWordCompilations = createAsyncThunk(
 	'compilations/fetchWordCompilations',
+	async (data: IGetCompilationsParams) => {
+		try {
+			const responseCompilations = await instance.post('compilations', data);
+			return responseCompilations.data;
+		} catch (e: any) {
+			message.error(e.response.data.message);
+		}
+	},
+);
+
+export const fetchAllWordCompilations = createAsyncThunk(
+	'compilations/fetchAllWordCompilations',
 	async () => {
 		try {
 			const responseCompilations = await instance.get('compilations');
@@ -43,13 +64,11 @@ export const fetchWordCompilations = createAsyncThunk(
 
 export const createWordCompilation = createAsyncThunk(
 	'compilations/createWordCompilation',
-	async (data: IWordCompilationRequest, thunkAPI) => {
+	async (data: IWordCompilationRequest) => {
 		try {
-			const response = await instance.post('compilations', data);
-			thunkAPI.dispatch(fetchWordCompilations());
+			const response = await instance.post('compilations/new', data);
 			return response.data;
 		} catch (e: any) {
-			console.log('тут = ', e.response.data.message);
 			message.error(e.response.data.message);
 		}
 	},
@@ -57,11 +76,10 @@ export const createWordCompilation = createAsyncThunk(
 
 export const deleteCompilation = createAsyncThunk(
 	'compilations/deleteCompilation',
-	async (id: number, thunkAPI) => {
+	async (id: number) => {
 		try {
 			const response = await instance.delete(`compilations/${id}`);
 			message.success('Подборка успешно удалена');
-			thunkAPI.dispatch(fetchWordCompilations());
 			return response.data;
 		} catch (e: any) {
 			// TODO месседж не должен быть вне компонента
@@ -72,11 +90,10 @@ export const deleteCompilation = createAsyncThunk(
 
 export const updateCompilation = createAsyncThunk(
 	'compilations/updateCompilation',
-	async (data: IWordCompilation, thunkAPI) => {
+	async (data: IWordCompilation) => {
 		try {
 			await instance.put(`compilations/${data.id}`, data);
 			message.success('Группа успешно обновлена');
-			thunkAPI.dispatch(fetchWordCompilations());
 		} catch (e: any) {
 			// TODO месседж не должен быть вне компонента
 			message.error(e.response.data.message);
@@ -124,6 +141,8 @@ export const deleteGroupCompilationAssociation = createAsyncThunk(
 
 const initialState: ICompilationState = {
 	compilations: [],
+	currentPage: 1,
+	totalWords: 0,
 	isLoading: false,
 	groupsCompilationsAssociations: [],
 };
@@ -138,10 +157,22 @@ const wordCompilationsSlice = createSlice({
 				state.isLoading = true;
 			})
 			.addCase(fetchWordCompilations.fulfilled, (state, action) => {
-				state.compilations = action.payload;
+				state.compilations = action.payload.compilations;
+				state.currentPage = action.payload.current;
+				state.totalWords = action.payload.total;
 				state.isLoading = false;
 			})
 			.addCase(fetchWordCompilations.rejected, (state) => {
+				state.isLoading = false;
+			})
+			.addCase(fetchAllWordCompilations.pending, (state) => {
+				state.isLoading = true;
+			})
+			.addCase(fetchAllWordCompilations.fulfilled, (state, action) => {
+				state.compilations = action.payload;
+				state.isLoading = false;
+			})
+			.addCase(fetchAllWordCompilations.rejected, (state) => {
 				state.isLoading = false;
 			})
 			.addCase(fetchGroupsCompilationsAssociations.pending, (state) => {

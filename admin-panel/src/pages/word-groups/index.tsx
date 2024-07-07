@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button, Flex, Form, FormProps, Input, Modal, Table } from 'antd';
+import { Button, Flex, Form, FormProps, Input, Table } from 'antd';
 import { useAppDispatch, useAppSelector } from '@shared/store/hooks';
 import { createGroup, deleteGroup, fetchGroups } from '@shared/store/slices/word-groups.slice';
 import { slugifyString } from '@shared/utils/slugifyString';
@@ -12,7 +12,14 @@ const WordGroups = () => {
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
-		dispatch(fetchGroups());
+		dispatch(
+			fetchGroups({
+				pagination: {
+					pageSize: 10,
+					current: 1,
+				},
+			}),
+		);
 	}, []);
 
 	const handleDelete = (id: number) => {
