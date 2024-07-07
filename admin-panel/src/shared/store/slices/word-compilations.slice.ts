@@ -2,11 +2,6 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { instance } from '@shared/api/axios-api';
 import { message } from 'antd';
 
-interface IGroup {
-	id: number;
-	title: string;
-}
-
 interface IWordCompilation {
 	id: number;
 	title: string;
@@ -30,7 +25,6 @@ interface IWordCompilationRequest extends Omit<IWordCompilation, 'id'> {}
 
 interface ICompilationState {
 	compilations: IWordCompilation[];
-	groups: IGroup[];
 	groupsCompilationsAssociations: IGroupsCompilationsAssociations[];
 	isLoading: boolean;
 }
@@ -46,15 +40,6 @@ export const fetchWordCompilations = createAsyncThunk(
 		}
 	},
 );
-
-export const fetchWordGroups = createAsyncThunk('compilations/fetchWordGroups', async () => {
-	try {
-		const response = await instance.get('groups');
-		return response.data.map((group: any) => ({ id: group.id, title: group.title }));
-	} catch (e: any) {
-		message.error(e.response.data.message);
-	}
-});
 
 export const createWordCompilation = createAsyncThunk(
 	'compilations/createWordCompilation',
@@ -140,7 +125,6 @@ export const deleteGroupCompilationAssociation = createAsyncThunk(
 const initialState: ICompilationState = {
 	compilations: [],
 	isLoading: false,
-	groups: [],
 	groupsCompilationsAssociations: [],
 };
 
@@ -158,16 +142,6 @@ const wordCompilationsSlice = createSlice({
 				state.isLoading = false;
 			})
 			.addCase(fetchWordCompilations.rejected, (state) => {
-				state.isLoading = false;
-			})
-			.addCase(fetchWordGroups.pending, (state) => {
-				state.isLoading = true;
-			})
-			.addCase(fetchWordGroups.fulfilled, (state, action) => {
-				state.groups = action.payload;
-				state.isLoading = false;
-			})
-			.addCase(fetchWordGroups.rejected, (state) => {
 				state.isLoading = false;
 			})
 			.addCase(fetchGroupsCompilationsAssociations.pending, (state) => {

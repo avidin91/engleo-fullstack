@@ -42,6 +42,8 @@ const App = () => {
 			}
 		} catch (e) {
 			console.log(e);
+			dispatch(logout());
+			navigate('/auth');
 		}
 	};
 
