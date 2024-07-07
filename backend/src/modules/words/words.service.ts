@@ -11,6 +11,7 @@ import { CreateWordDto } from './dto/create-word.dto';
 import { UpdateWordDto } from './dto/update-word.dto';
 import { WordCompilationsAssociation } from './entities/word-compilations-associations.entity';
 import { Compilations } from '../compilations/entities/compilations.entity';
+import { IWordCompilationIds } from './types';
 
 @Injectable()
 export class WordsService {
