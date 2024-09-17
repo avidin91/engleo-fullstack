@@ -6,7 +6,7 @@ import yaLogo from '@shared/img/ya-logo.png';
 import { AuthService } from '@shared/services/auth.service';
 import { setTokenToLocalStorage } from '@shared/utils/localstorage.helper';
 import { useAppDispatch } from '@shared/store/hooks';
-import { login } from '@shared/store/user/userSlice';
+// import { login } from '@shared/store/user/userSlice';
 
 const { Title, Text } = Typography;
 
@@ -28,7 +28,7 @@ const SignIn: FC<TSignIn> = ({ swapSignInToRegister, formPrefix }) => {
 		try {
 			const data = await AuthService.login({ email, password });
 			setTokenToLocalStorage(data.token);
-			dispatch(login(data));
+			// dispatch(login(data));
 		} catch (e) {
 			message.error('Ошибка авторизации');
 		}

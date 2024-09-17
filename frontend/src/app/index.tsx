@@ -6,7 +6,7 @@ import { ScrollRestoration } from 'react-router-dom';
 import { useAppDispatch } from '@shared/store/hooks';
 import { getTokenFromLocalStorage } from '@shared/utils/localstorage.helper';
 import { AuthService } from '@shared/services/auth.service';
-import { login, logout } from '@shared/store/user/userSlice';
+// import { login, logout } from '@shared/store/user/userSlice';
 
 const App = () => {
 	const dispatch = useAppDispatch();
@@ -16,12 +16,12 @@ const App = () => {
 			if (token) {
 				const data = await AuthService.getProfile();
 				if (data) {
-					dispatch(login(data));
+					// dispatch(login(data));
 				} else {
-					dispatch(logout());
+					// dispatch(logout());
 				}
 			} else {
-				dispatch(logout());
+				// dispatch(logout());
 			}
 		} catch (e) {
 			console.log(e);

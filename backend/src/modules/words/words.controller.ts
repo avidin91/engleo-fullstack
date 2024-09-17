@@ -57,6 +57,13 @@ export class WordsController {
         return await this.wordsService.getAllWordsCompilationsAssociations();
     }
 
+    @Get('compilations/:slug')
+    async getWordsCompilationAssociationBySlug(@Param('slug') slug: string) {
+        return await this.wordsService.getWordsCompilationAssociationBySlug(
+            slug,
+        );
+    }
+
     @Post('compilations')
     @Roles('ADMIN')
     @UseGuards(JwtAuthGuard, RolesGuard)

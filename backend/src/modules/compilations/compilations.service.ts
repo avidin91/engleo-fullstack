@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Compilations } from './entities/compilations.entity';
 import { CompilationsGroupsAssociation } from './entities/compilations-groups-associations.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreateCompilationDto } from './dto/create-compilation.dto';
 import { UpdateCompilationDto } from './dto/update-compilation.dto';
 import { ICompilationGroupIds } from './types';
@@ -82,6 +82,23 @@ export class CompilationsService {
         return await this.compilationsRepository.find({
             order: {
                 id: 'DESC',
+            },
+        });
+    }
+
+    async getCompilationsDemo() {
+        const groups = await this.groupsRepository.find({
+            order: {
+                id: 'DESC',
+            },
+            take: 4,
+        });
+
+        const groupIds = groups.map((group) => group.id);
+        return await this.compilationsGroupsRepository.find({
+            relations: ['compilation', 'group'],
+            where: {
+                group: In(groupIds),
             },
         });
     }

@@ -8,7 +8,7 @@ import SignInModal from '@features/sign-in-modal';
 import { useIsAuth } from '@shared/hooks/useIsAuth';
 import { UserOutlined } from '@ant-design/icons';
 import { useAppDispatch } from '@shared/store/hooks';
-import { logout } from '@shared/store/user/userSlice';
+// import { logout } from '@shared/store/user/userSlice';
 import { removeTokenFromLocalStorage } from '@shared/utils/localstorage.helper';
 
 const { Text } = Typography;
@@ -19,7 +19,7 @@ const HeaderComponent = () => {
 	const dispatch = useAppDispatch();
 
 	const handleLogout = () => {
-		dispatch(logout());
+		// dispatch(logout());
 		removeTokenFromLocalStorage();
 	};
 
@@ -83,16 +83,16 @@ const HeaderComponent = () => {
 					<Link to={'/about'}>
 						<Button type="text">О нас</Button>
 					</Link>
-					{isAuth ? (
-						<Dropdown menu={{ items: menuItems }} trigger={['click']}>
-							<Button>
-								Меню
-								<UserOutlined />
-							</Button>
-						</Dropdown>
-					) : (
-						<SignInModal text="Войти" button="small" formPrefix="header" />
-					)}
+					{/*{isAuth ? (*/}
+					{/*	<Dropdown menu={{ items: menuItems }} trigger={['click']}>*/}
+					{/*		<Button>*/}
+					{/*			Меню*/}
+					{/*			<UserOutlined />*/}
+					{/*		</Button>*/}
+					{/*	</Dropdown>*/}
+					{/*) : (*/}
+					{/*	<SignInModal text="Войти" button="small" formPrefix="header" />*/}
+					{/*)}*/}
 				</Flex>
 			</Header>
 		</ConfigProvider>

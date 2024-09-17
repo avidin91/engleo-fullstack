@@ -99,6 +99,24 @@ export class WordsService {
         return result;
     }
 
+    async getWordsCompilationAssociationBySlug(slug: string) {
+        const data = await this.wordCompilationsRepository.find({
+            relations: ['compilation', 'word'],
+            where: { compilation: { slug } },
+        });
+
+        if (data.length === 0) {
+            throw new NotFoundException(
+                `Compilation with slug '${slug}' not found`,
+            );
+        }
+
+        return {
+            compilation: data[0].compilation,
+            words: data.map((item) => item.word),
+        };
+    }
+
     async getAllWordsCompilationsAssociations() {
         const data = await this.wordCompilationsRepository.find({
             relations: ['compilation', 'word'],

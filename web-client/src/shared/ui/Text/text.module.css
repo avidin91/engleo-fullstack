@@ -1,0 +1,24 @@
+.text {
+	margin: 14px 0;
+}
+
+.s {
+	font-size: 14px;
+}
+
+.m {
+	font-size: 16px;
+}
+
+.l {
+	font-size: 18px;
+}
+
+.strong {
+	font-weight: 600
+}
+
+.extraStrong {
+	font-weight: 700
+}
+

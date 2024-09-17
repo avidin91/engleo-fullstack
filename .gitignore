@@ -6,3 +6,4 @@ backend/uploads/
 backend/dist/
 backend/.env
 admin-panel/node_modules/
+web-client/node_modules

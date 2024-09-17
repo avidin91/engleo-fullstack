@@ -1,0 +1,45 @@
+.headerComponent {
+	position: sticky;
+	z-index: 7;
+	top: 0;
+
+	display: flex;
+	justify-content: space-between;
+
+	width: 100vw;
+	height: 50px !important;
+	padding: 0 50px;
+
+	background-color: #BFCCF1;
+
+	font-size: 14px;
+
+}
+
+.headerComponent div {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
+.headerComponent p {
+	line-height: 1.5em;
+}
+
+.headerComponent button {
+	min-width: 70px;
+}
+
+.headerComponentLink {
+	display: flex;
+
+	width: 50px;
+	height: 50px;
+}
+
+.headerComponentText {
+	width: 300px;
+	margin: 0;
+
+	line-height: 1;
+}

@@ -1,0 +1,6 @@
+/.git/
+/.idea/
+/node_modules/
+/public/
+/.eslintrc.yml
+/README.md

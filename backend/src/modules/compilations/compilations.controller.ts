@@ -26,6 +26,11 @@ export class CompilationsController {
         return this.compilationsService.getAllCompilations();
     }
 
+    @Get('demo')
+    getCompilationsDemo() {
+        return this.compilationsService.getCompilationsDemo();
+    }
+
     @Post('new')
     @Roles('ADMIN')
     @UseGuards(JwtAuthGuard, RolesGuard)

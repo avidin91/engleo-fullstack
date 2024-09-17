@@ -1,0 +1,38 @@
+.footerComponent {
+	bottom: 0;
+}
+
+.footerComponentInnerWrapper {
+	display: flex;
+	align-items: start;
+	flex-direction: column;
+	gap: 8px;
+
+	padding: 24px 100px;
+    
+	background-color: #292929;
+}
+
+.footerComponentContactBlock {
+	display: flex;
+	gap: 32px;
+}
+
+.footerComponentButton {
+	display: flex;
+	gap: 8px;
+
+	color: #FF6700;
+
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.footerComponentText {
+	margin: 0;
+	padding-left: 10px;
+
+	color: white;
+
+	font-size: 16px;
+}
